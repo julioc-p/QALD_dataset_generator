@@ -48,11 +48,13 @@ def parse_json_to_dataframe(json_content):
 
 
 if __name__ == "__main__":
-    url_json = "https://raw.githubusercontent.com/ag-sc/QALD/refs/heads/master/5/data/qald-5_train.json"
-    response_json = requests.get(url_json)
-
-    if response_json.status_code == 200:
-        parsed_df = parse_json_to_dataframe(response_json.text)
-        print(parsed_df.head(10))  # Display the last 10 rows of the DataFrame
+    url = "https://raw.githubusercontent.com/ag-sc/QALD/refs/heads/master/3/data/dbpedia-train.xml"
+    response = requests.get(url)
+    if response.status_code == 200:
+        try:
+            df = parse_xml_to_dataframe(response.text)
+            print(df.iloc[0]['sparql_query'])
+        except Exception as e:
+            print(f"Failed to parse XML file with url {url}. Error: {e}")
     else:
-        print(f"Failed to fetch JSON file. Status code: {response_json.status_code}")
+        print(f"Failed to fetch XML file. Status code: {response.status_code}")
