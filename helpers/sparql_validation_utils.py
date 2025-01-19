@@ -1,7 +1,7 @@
 def validate_sparql_query_result(response):
     # Detect SELECT queries with no matches
     if "results" in response and not response["results"]["bindings"]:
-        return "Empty result (no matches)"
+        return False
 
     # Detect COUNT queries returning 0
     if "results" in response:
