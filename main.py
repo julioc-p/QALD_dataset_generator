@@ -41,8 +41,12 @@ if __name__ == "__main__":
     all_data_df.drop_duplicates(
         subset=["text_query", "language", "sparql_query"], inplace=True
     )
+
+    all_data_df = all_data_df[
+        all_data_df.sparql_query != "<SPARQL_QUERY_NOT_AVAILABLE>"
+    ]
     # store all data in a file
-    all_data_df.to_csv("all_data.csv", index=False)
+    all_data_df.to_csv("qald_challenges.csv", index=False)
 
     # valid_data_df = eliminate_invalid_sparql_queries(all_data_df)
     # print(valid_data_df)

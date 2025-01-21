@@ -15,7 +15,9 @@ def parse_xml_to_dataframe(xml_content):
         )
         for string_element in question.findall("string"):
             language = string_element.attrib.get("lang", "unknown")
-            if language in ["en", "de"]:  # Filter for English and German entries
+            if check_language(language):
+                if string_element.text is None:
+                    continue
                 text_query = string_element.text.strip()
                 data.append(
                     {
@@ -27,6 +29,11 @@ def parse_xml_to_dataframe(xml_content):
     return pd.DataFrame(data)
 
 
+def check_language(language):
+    # return language in ["en", "de"]
+    return True
+
+
 def parse_json_to_dataframe(json_content):
     data = json.loads(json_content)
     rows = []
@@ -35,7 +42,7 @@ def parse_json_to_dataframe(json_content):
         sparql_query = question.get("query", "<SPARQL_QUERY_NOT_AVAILABLE>")
         for body in question.get("body", []):
             language = body.get("language", "unknown")
-            if language in ["en", "de"]:  # Filter for English and German entries
+            if check_language(language):  # Filter for English and German entries
                 text_query = body.get("string", "").strip()
                 rows.append(
                     {
@@ -48,12 +55,12 @@ def parse_json_to_dataframe(json_content):
 
 
 if __name__ == "__main__":
-    url = "https://raw.githubusercontent.com/ag-sc/QALD/refs/heads/master/3/data/dbpedia-train.xml"
+    url = "https://raw.githubusercontent.com/ag-sc/QALD/master/5/data/qald-5_train_raw.xml"
     response = requests.get(url)
     if response.status_code == 200:
         try:
             df = parse_xml_to_dataframe(response.text)
-            print(df.iloc[0]['sparql_query'])
+            print(df.iloc[0]["sparql_query"])
         except Exception as e:
             print(f"Failed to parse XML file with url {url}. Error: {e}")
     else:
