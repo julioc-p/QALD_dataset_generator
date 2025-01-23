@@ -13,7 +13,11 @@ HEADERS = {
     "X-GitHub-Api-Version": "2022-11-28",
 }
 BASE_API_URL = "https://api.github.com"
-BASE_REPO = "https://github.com/ag-sc/QALD"
+BASE_REPOS = [
+    "https://github.com/ag-sc/QALD",
+    "https://github.com/KGQA/QALD-10",
+    "https://github.com/KGQA/QALD_9_plus",
+]
 EXTENSIONS = ["xml", "json"]
 OUTPUT_PATH = "sources/qald_urls.json"
 
@@ -25,7 +29,7 @@ def get_all_data_files(repo_url):
     json_urls = []
     xml_urls = []
 
-    urls = get_urls(BASE_REPO)
+    urls = get_urls(repo_url)
     for ext in urls:
         for url in urls[ext]:
             # if "data" is not in path ignore
@@ -155,8 +159,14 @@ def get_default_branch(repo_url: str) -> str:
 
 
 if __name__ == "__main__":
-    json_urls, xml_urls = get_all_data_files(BASE_REPO)
-    # make sure the output directory exists
+    json_urls, xml_urls = [], []
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+    for repo in BASE_REPOS:
+        json_urls_repo, xml_urls_repo = get_all_data_files(repo)
+        json_urls_repo = list(set(json_urls_repo))
+        xml_urls_repo = list(set(xml_urls_repo))
+        json_urls.extend(json_urls_repo)
+        xml_urls.extend(xml_urls_repo)
+    # print(json_urls, xml_urls)
     with open(OUTPUT_PATH, "w") as f:
         json.dump({"json": json_urls, "xml": xml_urls}, f)

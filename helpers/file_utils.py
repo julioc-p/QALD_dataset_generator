@@ -14,7 +14,7 @@ def parse_xml_to_dataframe(xml_content):
             else "<SPARQL_QUERY_NOT_AVAILABLE>"
         )
         for string_element in question.findall("string"):
-            language = string_element.attrib.get("lang", "unknown")
+            language = string_element.attrib.get("lang", "en")
             if check_language(language):
                 if string_element.text is None:
                     continue
@@ -41,7 +41,7 @@ def parse_json_to_dataframe(json_content):
     for question in data.get("questions", []):
         sparql_query = question.get("query", "<SPARQL_QUERY_NOT_AVAILABLE>")
         for body in question.get("body", []):
-            language = body.get("language", "unknown")
+            language = body.get("language", "en")
             if check_language(language):  # Filter for English and German entries
                 text_query = body.get("string", "").strip()
                 rows.append(
